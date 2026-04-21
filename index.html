@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Andador Records — Próximamente</title>
+  <meta name="description" content="Una nueva tienda de discos en el corazón de Querétaro. Vinyl nuevo, usado y de colección. Abriendo pronto en Centro Histórico."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital@0;1&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --obsidiana: #2B2925;
+      --cantera:   #C4966A;
+      --papel:     #F0EDE6;
+      --piedra:    #D4C9B0;
+      --jardin:    #4A6741;
+      --barro:     #8C3B2A;
+      --ink:       #1C1B18;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; }
+
+    body {
+      background-color: var(--ink);
+      color: var(--papel);
+      font-family: 'Jost', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--cantera);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(196,150,106,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease, left 0.12s ease, top 0.12s ease;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Layout */
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      grid-template-columns: 1fr;
+      position: relative;
+    }
+
+    /* Groove lines background */
+    .grooves {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.06;
+    }
+    .grooves svg { width: 100%; height: 100%; }
+
+    /* Large decorative record */
+    .record-bg {
+      position: fixed;
+      right: -18vw;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 72vw;
+      max-width: 780px;
+      aspect-ratio: 1;
+      pointer-events: none;
+      opacity: 0.07;
+      animation: spin 80s linear infinite;
+    }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    /* Header */
+    header {
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .logo-mark svg { flex-shrink: 0; }
+
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--papel);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .logo-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cantera);
+      margin-top: 5px;
+      font-weight: 300;
+    }
+
+    .header-city {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(212,201,176,0.4);
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+
+    /* Hero */
+    main {
+      display: flex;
+      align-items: center;
+      padding: 2rem 3rem 2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero {
+      max-width: 640px;
+    }
+
+    .eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cantera);
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.5s forwards;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--cantera);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      color: var(--papel);
+      margin-bottom: 0.15em;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.65s forwards;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--cantera);
+    }
+
+    .subtitle {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+      color: rgba(212,201,176,0.65);
+      line-height: 1.75;
+      margin-top: 1.75rem;
+      max-width: 460px;
+      font-style: italic;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.85s forwards;
+    }
+
+    /* Email form */
+    .notify-form {
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 0;
+      max-width: 420px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.05s forwards;
+    }
+
+    .notify-form input[type="email"] {
+      flex: 1;
+      background: rgba(240,237,230,0.07);
+      border: 1px solid rgba(196,150,106,0.3);
+      border-right: none;
+      color: var(--papel);
+      padding: 0.85rem 1.1rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      border-radius: 0;
+    }
+    .notify-form input[type="email"]::placeholder { color: rgba(212,201,176,0.35); }
+    .notify-form input[type="email"]:focus {
+      border-color: rgba(196,150,106,0.7);
+      background: rgba(240,237,230,0.1);
+    }
+
+    .notify-form button {
+      background: var(--cantera);
+      color: var(--ink);
+      border: 1px solid var(--cantera);
+      padding: 0.85rem 1.4rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .notify-form button:hover {
+      background: var(--papel);
+      border-color: var(--papel);
+    }
+
+    .form-note {
+      margin-top: 0.75rem;
+      font-size: 0.65rem;
+      color: rgba(212,201,176,0.3);
+      letter-spacing: 0.06em;
+      font-weight: 300;
+    }
+
+    /* Tagline strip */
+    .tagline-strip {
+      margin-top: 3rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.2s forwards;
+    }
+    .tagline-strip .dot {
+      width: 4px; height: 4px;
+      background: var(--cantera);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .tagline-word {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,201,176,0.35);
+      font-weight: 400;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+      border-top: 1px solid rgba(212,201,176,0.07);
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.35s forwards;
+    }
+
+    .footer-location {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(212,201,176,0.3);
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-location::before {
+      content: '◦';
+      color: var(--cantera);
+      font-size: 0.8rem;
+    }
+
+    .footer-genres {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(212,201,176,0.2);
+      font-weight: 300;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Success state */
+    .success-msg {
+      display: none;
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: var(--jardin);
+      letter-spacing: 0.06em;
+      font-family: 'Libre Baskerville', serif;
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      header { padding: 1.75rem 1.5rem; }
+      main { padding: 1.5rem 1.5rem 1.5rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+      .notify-form { flex-direction: column; }
+      .notify-form input[type="email"] { border-right: 1px solid rgba(196,150,106,0.3); border-bottom: none; }
+      .notify-form button { width: 100%; }
+      .record-bg { right: -40vw; width: 100vw; opacity: 0.05; }
+      .tagline-strip { flex-wrap: wrap; gap: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Background grooves -->
+<div class="grooves">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#C4966A" stroke-width="1">
+      <line x1="0" y1="120" x2="1440" y2="120"/>
+      <line x1="0" y1="200" x2="1440" y2="200"/>
+      <line x1="0" y1="280" x2="1440" y2="280"/>
+      <line x1="0" y1="360" x2="1440" y2="360"/>
+      <line x1="0" y1="440" x2="1440" y2="440"/>
+      <line x1="0" y1="520" x2="1440" y2="520"/>
+      <line x1="0" y1="600" x2="1440" y2="600"/>
+      <line x1="0" y1="680" x2="1440" y2="680"/>
+      <line x1="0" y1="760" x2="1440" y2="760"/>
+    </g>
+  </svg>
+</div>
+
+<!-- Large decorative record -->
+<svg class="record-bg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="200" cy="200" r="198" fill="#C4966A"/>
+  <circle cx="200" cy="200" r="188" fill="#2B2925"/>
+  <circle cx="200" cy="200" r="170" stroke="#C4966A" stroke-width="0.5" fill="none"/>
+  <circle cx="200" cy="200" r="155" stroke="#C4966A" stroke-width="0.5" fill="none"/>
+  <circle cx="200" cy="200" r="140" stroke="#C4966A" stroke-width="0.5" fill="none"/>
+  <circle cx="200" cy="200" r="125" stroke="#C4966A" stroke-width="0.5" fill="none"/>
+  <circle cx="200" cy="200" r="110" stroke="#C4966A" stroke-width="0.5" fill="none"/>
+  <circle cx="200" cy="200" r="95"  stroke="#C4966A" stroke-width="0.5" fill="none"/>
+  <circle cx="200" cy="200" r="80"  stroke="#C4966A" stroke-width="0.5" fill="none"/>
+  <circle cx="200" cy="200" r="65"  fill="#C4966A"/>
+  <circle cx="200" cy="200" r="52"  fill="#2B2925"/>
+  <circle cx="200" cy="200" r="14"  fill="#C4966A"/>
+  <circle cx="200" cy="200" r="6"   fill="#2B2925"/>
+</svg>
+
+<div class="page">
+
+  <header>
+    <div class="logo-mark">
+      <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="19" cy="19" r="17" fill="#F0EDE6"/>
+        <circle cx="19" cy="19" r="11" fill="#C4966A"/>
+        <circle cx="19" cy="19" r="4.5" fill="#1C1B18"/>
+        <circle cx="19" cy="19" r="1.8" fill="#F0EDE6"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-name">Andador</span>
+        <span class="logo-sub">Records · Querétaro</span>
+      </div>
+    </div>
+    <span class="header-city">Centro Histórico</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="eyebrow">Próximamente</p>
+      <h1>Vinyl.<br/><em>Curado.</em><br/>Querétaro.</h1>
+      <p class="subtitle">
+        Una tienda de discos nueva en el corazón del Centro Histórico.
+        Nuevo, usado y de colección — Rock, Jazz, Electrónica, Hip-Hop y más.
+        Abriendo pronto en los andadores.
+      </p>
+
+      <form class="notify-form" id="notifyForm" onsubmit="handleSubmit(event)">
+        <input type="email" placeholder="tu@correo.com" required autocomplete="email"/>
+        <button type="submit">Avísame</button>
+      </form>
+      <p class="form-note">Sin spam. Solo te escribimos cuando abrimos.</p>
+      <p class="success-msg" id="successMsg">✓ Listo — te avisamos en cuanto abramos.</p>
+
+      <div class="tagline-strip">
+        <span class="tagline-word">Entra</span>
+        <div class="dot"></div>
+        <span class="tagline-word">Escucha</span>
+        <div class="dot"></div>
+        <span class="tagline-word">Regresa</span>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span class="footer-location">Querétaro, México · Centro Histórico</span>
+    <span class="footer-genres">Rock · Jazz · Electrónica · Hip-Hop · Soul · Clásico</span>
+  </footer>
+
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+  function animRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing); }
+  animRing();
+
+  // Form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    const form = document.getElementById('notifyForm');
+    const msg = document.getElementById('successMsg');
+    form.style.display = 'none';
+    document.querySelector('.form-note').style.display = 'none';
+    msg.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
